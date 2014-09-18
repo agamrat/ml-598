@@ -36,25 +36,27 @@ def trainLDA(x,y):
     #calculating the cov matrix for y = 0
     cov =[0]*len(x[0])
 
-    #would loop for each class
-    #except assume cov matrices the same (so just set k = 0 since k=1 is same as k =0)
-    k = 0
-    result= []
+    result=[]
     #for each data row
     for m in xrange(len(x[0])):
-         result.append([0]*len(x[0]))
-         #result should be a 4 x 4 matrix
+        result.append([0]*len(x[0]))
+        #result should be a 4 x 4 matrix
 
-    for i in data:
-        #l(yi = 0)
-        indicator = 1 if i[0] == 0 else 0 
-        #l(yi=0) * (x(i) - mean(k))
-        diffFromMean= indicator * (numpy.subtract(i[1] , means[k]))
-        #multiply (xi -mean[k]) by its transpose
-        tempresult = numpy.multiply(diffFromMean,zip(*[diffFromMean]))
-        result = numpy.add(result, tempresult)
-        #divide each sum by the number of entries in the opposite class
-    cov = [r/float(count[1-k]) for r in  result]
+    # loop for each class
+    for k in list(count):
+        k = int(k)
+
+        for i in data:
+            #l(yi = 0)
+            indicator = 1 if i[0] == 0 else 0 
+            #l(yi=0) * (x(i) - mean(k))
+            diffFromMean= indicator * (numpy.subtract(i[1] , means[k]))
+            #multiply (xi -mean[k]) by its transpose
+            tempresult = numpy.multiply(diffFromMean,zip(*[diffFromMean]))
+            result = numpy.add(result, tempresult)
+            #divide each sum by the number of entries in the opposite class
+
+        cov = numpy.add(cov, [r/float(count[1-k]) for r in  result])
 
     return (pclasses, means, cov)
 
