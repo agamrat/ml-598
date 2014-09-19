@@ -108,6 +108,6 @@ def getConfusionMatrix(weightVector,x,y):
         if prediction == 1:
             confusion[0][int(1-y[i])] = confusion[0][int(1-y[i])] +1
         else:
-            confusion[1][int(y[i])] = confusion[1][int(y[i])]+1
+            confusion[1][int(1-y[i])] = confusion[1][int(1-y[i])]+1
     print ""
     return confusion
