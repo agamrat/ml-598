@@ -41,11 +41,12 @@ if sys.argv[1] == "-lda":
 for i in xrange(len(controls)):
     params = controls[i]
     resultfile = open(test + "_result" + str(i), 'w') 
-    resultfile.write('"WeightVector","Error"\n')
+    resultfile.write('"WeightVector","Error","ConfusionMatrix"\n')
     for j in xrange(int(math.floor(params[3]))):
         result= logisticregression.trainLogisticReg(params[0],params[1], int(params[2]), x, y)
         error = logisticregression.testLogisticReg(result, testX, testY)
-        resultfile.write(str(result) + "," + str(error) + "\n")    
+        confusion = logisticregression.getConfusionMatrix(result, testX,testY)
+        resultfile.write(str(result) + "," + str(error) + ","+ str(confusion)+"\n")    
     resultfile.close()
         
  
