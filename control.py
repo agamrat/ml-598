@@ -7,8 +7,8 @@ import math
 def runLDA(x,y, testX, testY, testfilename):
     (prob, mean, cov) = lda.trainLDA(x,y)
     resultfile=open(testfilename + "_result",'w')
-    resultfile.write("'Misclassification rate'\n")
-    resultfile.write(str(lda.testLDA(prob, mean, cov,testX, testY)))
+    resultfile.write("'Probabilities','Means','Covariance','Confusion Matrix'\n")
+    resultfile.write(str(prob)+"\n"+str(mean)+"\n"+str(cov)+"\n"+str(lda.getConfusionMatrix(prob, mean, cov,testX, testY)))
     resultfile.close()
     return
 
@@ -41,12 +41,11 @@ if sys.argv[1] == "-lda":
 for i in xrange(len(controls)):
     params = controls[i]
     resultfile = open(test + "_result" + str(i), 'w') 
-    resultfile.write('"WeightVector","Error","ConfusionMatrix"\n')
+    resultfile.write('"WeightVector","ConfusionMatrix"\n')
     for j in xrange(int(math.floor(params[3]))):
         result= logisticregression.trainLogisticReg(params[0],params[1], int(params[2]), x, y)
-        error = logisticregression.testLogisticReg(result, testX, testY)
         confusion = logisticregression.getConfusionMatrix(result, testX,testY)
-        resultfile.write(str(result) + "," + str(error) + ","+ str(confusion)+"\n")    
+        resultfile.write(str(result) + "," + str(confusion)+"\n")    
     resultfile.close()
         
  

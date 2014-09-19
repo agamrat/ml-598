@@ -93,3 +93,40 @@ def testLDA(pclasses, means, cov, x, y):
             
     return misclassifications / float(len(y))
 
+"""
+Get confusion matrix for LDA
+"""
+def getConfusionMatrix(pclasses, means, cov, x, y):
+    #classify by using log-odds ratio
+
+    #first log term
+    firstTerm = math.log(pclasses[1]/pclasses[0],2)
+
+    #second term
+    firstMatrix=numpy.multiply(-0.5,numpy.add(means[0], means[1]))
+    try:
+        covInvert = numpy.linalg.inv(cov)
+    except: #singular matrix
+        covInvert = numpy.linalg.pinv(cov)
+
+    subtractedMeans = zip(*[numpy.subtract(means[0],means[1])])
+    secondTerm = numpy.dot(numpy.dot(firstMatrix, covInvert), subtractedMeans)
+
+    #third term
+    thirdTerm = numpy.dot(covInvert, subtractedMeans)
+
+    confusion = []
+    confusion.append([0,0])
+    confusion.append([0,0])
+
+    for i in xrange(len(x)):
+        prediction = numpy.dot(x[i],thirdTerm) + firstTerm + secondTerm
+        #check if prediction correct
+        if prediction == 1:
+            confusion[0][int(1-y[i])] = confusion[0][int(1-y[i])] +1
+        else:
+            confusion[1][int(1-y[i])] = confusion[1][int(1-y[i])]+1
+            
+    return confusion
+
+

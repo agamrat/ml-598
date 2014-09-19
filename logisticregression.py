@@ -76,6 +76,9 @@ def testLogisticReg(weightVector, x, y):
         error = error + temperror
     return -error
 
+"""
+Get confusion matrix from logistic regression
+"""
 def getConfusionMatrix(weightVector,x,y):
 
     #check valid weight vector length
@@ -109,5 +112,5 @@ def getConfusionMatrix(weightVector,x,y):
             confusion[0][int(1-y[i])] = confusion[0][int(1-y[i])] +1
         else:
             confusion[1][int(1-y[i])] = confusion[1][int(1-y[i])]+1
- 
+
     return confusion
