@@ -48,8 +48,9 @@ def getConfusionMatrix(py, theta, x,y):
     for i in xrange(len(x)):
         prob = 1
         for j in x[i]:
-            prob = prob*theta[int(j)][1]
-        if prob > 0.5:
+            if j ==1:
+                prob = prob*theta[int(j)][1]
+        if prob >= 0.5:
             confusion[0][int(1-y[i])] = confusion[0][int(1-y[i])] +1
         else:
             confusion[1][int(1-y[i])] = confusion[1][int(1-y[i])]+1
