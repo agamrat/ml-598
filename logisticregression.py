@@ -101,7 +101,10 @@ def getConfusionMatrix(weightVector,x,y):
         # wTx = w0 + w1x1 + w2x2 etc.
         wTx = intercept + numpy.dot(weightVector, x[i])
         # sigmoid = 1 / (1 + e^-t)
-        innersigmoid = math.exp(numpy.multiply(-1, wTx))
+        try:
+            innersigmoid = math.exp(numpy.multiply(-1, wTx))
+        except OverflowError:
+            innersigmoid = 0
         sigmoid = 1/(1+innersigmoid)
         #if over half, assign to class 1
         prediction=0
