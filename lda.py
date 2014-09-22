@@ -10,7 +10,6 @@ def trainLDA(x,y):
     count = collections.Counter(y)
     if len(list(count)) > 2:
         sys.exit("Please use an algorithm that works for more than 2 classes.")
-    x, scales = logisticregression.normalize(x)
     #calculating p(y=1) and p(y=0)
     pclasses = {}
     for i in list(count):
@@ -58,7 +57,7 @@ def trainLDA(x,y):
             cov = numpy.add(cov, [r/float(count[1-k]) for r in  result])
  	#cov = numpy.add(cov, [r/float(sum(count.values())-2) for r in  result])
 
-    return (scales, pclasses, means, cov)
+    return (pclasses, means, cov)
 
 """
 Test LDA predictions - returns the misclassification rate
@@ -95,9 +94,9 @@ def testLDA(pclasses, means, cov, x, y):
 """
 Get confusion matrix for LDA
 """
-def getConfusionMatrix(scales, pclasses, means, cov, x, y):
+def getConfusionMatrix(pclasses, means, cov, x, y):
     #classify by using log-odds ratio
-    x = numpy.divide(x, scales)
+   
     #first log term
     firstTerm = math.log(pclasses[1]/pclasses[0],2)
     #second term
