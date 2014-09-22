@@ -8,9 +8,19 @@ Create the initial weight vector w0.
 def getInitVector(features):
     result = []
     for i in xrange(features):
-        result.append(random.randint(-10,10))
+        result.append(random.random())
     return result
 
+
+def normalize(X):
+    scales = []
+    X = numpy.array(X)
+    for i in xrange(0, X.shape[1]):
+        max_val = max(X[:,i])
+        X[:,i] = X[:,i]/max_val
+	scales.append(max_val)
+    return X.tolist(), scales
+	
 """
 Calculate the next-best weight vector for logistic regression.
 """
@@ -21,7 +31,8 @@ def __nextStep(vector, features, outputs):
         try:
             sigmoid = 1/(1+math.exp(-(numpy.dot(vector,features[i]))))
         except OverflowError:
-            sigmoid=1
+            print "ERROR"
+	    sigmoid=1
         #xi*(yi-sigma)
         result = result +numpy.multiply(features[i],(outputs[i] - sigmoid))
     return result 
@@ -32,7 +43,7 @@ Iteration limit used to avoid infinite loop in case of bad hyper-parameter choic
 """
 def trainLogisticReg(epsilon, stepsize, iterLim, x,y):
     wNext = getInitVector(len(x[0]))
-
+    x, scales = normalize(x)
     for i in xrange(iterLim):
         #wk < - prev wk+1
         wCur = wNext
@@ -40,10 +51,10 @@ def trainLogisticReg(epsilon, stepsize, iterLim, x,y):
         wNext = wCur + (stepsize * __nextStep(wCur, x,y)) 
  	#have the values changed much between wk+1 and wk?
         isDone= all( abs(q)  < epsilon for q in numpy.subtract(wNext,wCur))
-        if isDone: 
+        if isDone:
             break
 
-    return wNext
+    return wNext, scales
 
 """
 Test a set of weights on data.
@@ -79,7 +90,7 @@ def testLogisticReg(weightVector, x, y):
 """
 Get confusion matrix from logistic regression
 """
-def getConfusionMatrix(weightVector,x,y):
+def getConfusionMatrix(weightVector,scales,x,y):
 
     #check valid weight vector length
     if len(weightVector) != len(x[0]) and len(weightVector) != len(x[0]) + 1:
@@ -98,8 +109,9 @@ def getConfusionMatrix(weightVector,x,y):
     confusion.append([0,0])
 
     for i in xrange(len(x)):
+	x[i] = numpy.divide(x[i], scales[1:])
         # wTx = w0 + w1x1 + w2x2 etc.
-        wTx = intercept + numpy.dot(weightVector, x[i])
+        wTx = intercept*scales[0] + numpy.dot(weightVector, x[i])
         # sigmoid = 1 / (1 + e^-t)
         try:
             innersigmoid = math.exp(numpy.multiply(-1, wTx))
