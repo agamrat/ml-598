@@ -1,5 +1,10 @@
 import sklearn.linear_model as linmod
+import lda as lda_custom
+import sklearn.lda as lda
 import numpy
+import sklearn.naive_bayes as nb
+import logisticregression as linmod_custom
+import naivebayes as nb_custom
 
 def read_data_from_csv(file_name):
 	X = numpy.genfromtxt(file_name, delimiter=',')
@@ -37,25 +42,35 @@ def split_data(X, Y):
 			break
 	return numpy.array(X_train), numpy.array(Y_train), numpy.array(X_test), numpy.array(Y_test)
 	
-model = linmod.LogisticRegression()
+#lr_model = linmod.LogisticRegression()
+#lda_model = lda.LDA()
+nb_model = nb.MultinomialNB()
 X, Y = read_data_from_csv("final_data.csv")
-
 X_train, Y_train, X_test, Y_test = split_data(X,Y)
-print X_train.shape, Y_train.shape, X_test.shape, Y_test.shape
 
+#lr_model.fit(X_train, Y_train)
+#lda_model.fit(X_train, Y_train)
+nb_model.fit(X_train, Y_train.ravel())
 
+#(scales, classes, mean, covar) = lda_custom.trainLDA(X_train.tolist(), Y_train.ravel().tolist())
+#print lda_custom.getConfusionMatrix(scales, classes, mean, covar, X_test, Y_test)
+#X_train_with_intercepts = numpy.ones((X_train.shape[0], X_train.shape[1]+1))
+#X_train_with_intercepts[:,1:] = X_train
+#weights, scales = linmod_custom.trainLogisticReg(0.01, 0.00001, 1000, X_train_with_intercepts.tolist(), Y_train.ravel().tolist())
+#print linmod_custom.getConfusionMatrix(weights, scales, X_test, Y_test)
 
-model.fit(X_train, Y_train)
+(py, theta) = nb_custom.trainNaiveBayesMN(X_train.tolist(), Y_train.ravel().tolist())
+print nb_custom.getConfusionMatrixMN(py, theta, X_test.tolist(), Y_test.ravel().tolist())
 
 tp, tn, fp, fn = 0, 0, 0, 0
 for i in xrange(0, X_test.shape[0]):
-	val = model.predict(X_test[i,:])
+	val = nb_model.predict(X_test[i,:])
 	if (val == 1 and Y_test[i] == 1):
 		tp += 1
 	elif (val == 1 and Y_test[i] == 0):
 		fp += 1
-	elif (val == 0 and Y_train[i] == 0):
+	elif (val == 0 and Y_test[i] == 0):
 		tn += 1
-	elif (val == 0 and Y_train[i] == 1):
+	elif (val == 0 and Y_test[i] == 1):
 		fn += 1
 print "TP: %d, FP: %d, TN: %d, FN: %d" % (tp, fp, tn, fn)
