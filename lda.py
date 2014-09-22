@@ -1,6 +1,7 @@
 import collections
 import numpy
 import math
+import logisticregression
 
 """
 Train an LDA and return (p(y), means, covariance).
@@ -9,7 +10,7 @@ def trainLDA(x,y):
     count = collections.Counter(y)
     if len(list(count)) > 2:
         sys.exit("Please use an algorithm that works for more than 2 classes.")
-
+    x, scales = logisticregression.normalize(x)
     #calculating p(y=1) and p(y=0)
     pclasses = {}
     for i in list(count):
@@ -17,7 +18,6 @@ def trainLDA(x,y):
 
     for j in pclasses:
          pclasses[j]= float(pclasses[j])/sum(count.values())
-
     #calculating the means of each class
     data = zip(y,x)
     means = [[],[]]
@@ -48,24 +48,23 @@ def trainLDA(x,y):
 
         for i in data:
             #l(yi = 0)
-            indicator = 1 if i[0] == 0 else 0 
+            indicator = 1 if i[0] == k else 0 
             #l(yi=0) * (x(i) - mean(k))
-            diffFromMean= indicator * (numpy.subtract(i[1] , means[k]))
+            diffFromMean = indicator * (numpy.subtract(i[1] , means[k]))
             #multiply (xi -mean[k]) by its transpose
             tempresult = numpy.multiply(diffFromMean,zip(*[diffFromMean]))
             result = numpy.add(result, tempresult)
             #divide each sum by the number of entries in the opposite class
+            cov = numpy.add(cov, [r/float(count[1-k]) for r in  result])
+ 	#cov = numpy.add(cov, [r/float(sum(count.values())-2) for r in  result])
 
-        cov = numpy.add(cov, [r/float(count[1-k]) for r in  result])
-
-    return (pclasses, means, cov)
+    return (scales, pclasses, means, cov)
 
 """
 Test LDA predictions - returns the misclassification rate
 """
 def testLDA(pclasses, means, cov, x, y):
     #classify by using log-odds ratio
-
     #first log term
     firstTerm = math.log(pclasses[1]/pclasses[0],2)
 
@@ -96,20 +95,18 @@ def testLDA(pclasses, means, cov, x, y):
 """
 Get confusion matrix for LDA
 """
-def getConfusionMatrix(pclasses, means, cov, x, y):
+def getConfusionMatrix(scales, pclasses, means, cov, x, y):
     #classify by using log-odds ratio
-
+    x = numpy.divide(x, scales)
     #first log term
     firstTerm = math.log(pclasses[1]/pclasses[0],2)
-
     #second term
     firstMatrix=numpy.multiply(-0.5,numpy.add(means[0], means[1]))
     try:
         covInvert = numpy.linalg.inv(cov)
     except: #singular matrix
         covInvert = numpy.linalg.pinv(cov)
-
-    subtractedMeans = zip(*[numpy.subtract(means[0],means[1])])
+    subtractedMeans = zip(*[numpy.subtract(means[1],means[0])])
     secondTerm = numpy.dot(numpy.dot(firstMatrix, covInvert), subtractedMeans)
 
     #third term
@@ -121,8 +118,8 @@ def getConfusionMatrix(pclasses, means, cov, x, y):
 
     for i in xrange(len(x)):
         prediction = numpy.dot(x[i],thirdTerm) + firstTerm + secondTerm
-        #check if prediction correct
-        if prediction == 1:
+	#check if prediction correct
+        if prediction >= 0:
             confusion[0][int(1-y[i])] = confusion[0][int(1-y[i])] +1
         else:
             confusion[1][int(1-y[i])] = confusion[1][int(1-y[i])]+1
