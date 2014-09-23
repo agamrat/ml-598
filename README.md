@@ -7,7 +7,7 @@ This repository contains the code to implement the three basic classification al
 scrape_files.py is run with no arguments. You will need to change line 90 to your home directory. Also you should have run the bulk data download found [here](https://www.govtrack.us/developers/data) which will create the proper directory structure.
 
 ##Running K-Fold Validation
-To run K-Fold one must run the kfolds.py without any arguments. To change the number of groups (k) change the parameter found at line 276. To change the file name used to read in the dataset change the parameter at line 274.
+To run K-Fold one must run the kfolds.py without any arguments. To change the number of groups (k) change the parameter found at line 276. To change the file name used to read in the dataset change the parameter at line 274. Finally the (hyper) parameters used for logistic regression can be changed at line 76 (epsilon and step-size)
 
 
 ##Basic Algorithms
