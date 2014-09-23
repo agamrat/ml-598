@@ -60,11 +60,11 @@ def kfolds_all_algos(k, x, y, isotest_x, isotest_y):
 		#Now we have test and training data... what shall we do?
 		#train on LDA
 		print "Training LDA..."
-		(prob, mean, cov) = lda.trainLDA(train[0], train[1])
+		(prob, mean, cov) = lda.trainLDA(copy.deepcopy(train[0]), copy.deepcopy(train[1]))
 		#print str(prob) + "\t" + str(mean) + "\t" + str(cov)
 		print "DONE training LDA."
 		print "Training NB..."
-		(py, theta) = naivebayes.trainNaiveBayesMN(train[0], train[1])
+		(py, theta) = naivebayes.trainNaiveBayesMN(copy.deepcopy(train[0]), copy.deepcopy(train[1]))
 		#print str(py) + "\t" + str(theta)
 		print "DONE training NB"
 		print "Training Logistic Regression..."
@@ -94,15 +94,15 @@ def kfolds_all_algos(k, x, y, isotest_x, isotest_y):
 			print "%s - TP: %d, FP: %d, TN: %d, FN: %d" % (name, tp, fp, tn, fn)
 			
 		#get Prediction Errors on left out set
-		lr_test_error = logisticregression.getConfusionMatrix(wvector,scales, test[0], test[1])
-		lr_train_error = logisticregression.getConfusionMatrix(wvector,scales, train[0], train[1])
-		lr_iso_error = logisticregression.getConfusionMatrix(wvector,scales, isotest_x, isotest_y)
-		lda_test_error = lda.getConfusionMatrix(prob, mean, cov, test[0], test[1])
-		lda_train_error = lda.getConfusionMatrix(prob, mean, cov, train[0], train[1])
-		lda_iso_error = lda.getConfusionMatrix(prob, mean, cov, isotest_x, isotest_y)
-		nb_test_error = naivebayes.getConfusionMatrixMN(py, theta, test[0], test[1])
-		nb_train_error = naivebayes.getConfusionMatrixMN(py, theta, train[0], train[1])
-		nb_iso_error = naivebayes.getConfusionMatrixMN(py, theta, isotest_x, isotest_y)
+		lr_test_error = logisticregression.getConfusionMatrix(wvector,scales, copy.deepcopy(test[0]), copy.deepcopy(test[1]))
+		lr_train_error = logisticregression.getConfusionMatrix(wvector,scales, copy.deepcopy(train[0]), copy.deepcopy(train[1]))
+		lr_iso_error = logisticregression.getConfusionMatrix(wvector,scales, copy.deepcopy(isotest_x), copy.deepcopy(isotest_y))
+		lda_test_error = lda.getConfusionMatrix(prob, mean, cov, copy.deepcopy(test[0]), copy.deepcopy(test[1]))
+		lda_train_error = lda.getConfusionMatrix(prob, mean, cov, copy.deepcopy(train[0]), copy.deepcopy(train[1]))
+		lda_iso_error = lda.getConfusionMatrix(prob, mean, cov, copy.deepcopy(isotest_x), copy.deepcopy(isotest_y))
+		nb_test_error = naivebayes.getConfusionMatrixMN(py, theta, copy.deepcopy(test[0]), copy.deepcopy(test[1]))
+		nb_train_error = naivebayes.getConfusionMatrixMN(py, theta, copy.deepcopy(train[0]), copy.deepcopy(train[1]))
+		nb_iso_error = naivebayes.getConfusionMatrixMN(py, theta, copy.deepcopy(isotest_x), copy.deepcopy(isotest_y))
 		
 		#add to sets the false positives (for now)
 		lr_train_results.append(lr_train_error)
