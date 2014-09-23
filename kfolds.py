@@ -5,7 +5,7 @@ import lda
 import logisticregression
 import naivebayes
 import csv_parser
-import sklearn.linear_model as linmod
+#import sklearn.linear_model as linmod
 
 #k is number of groups needed, data is a list of data rows
 def splitdata(k, x, y):
@@ -77,21 +77,21 @@ def kfolds_all_algos(k, x, y, isotest_x, isotest_y):
 		#print str(wvector)
 		print "DONE training Logistic Regression.\n"
 		
-		lr_model = linmod.LogisticRegression()
-		lr_model.fit(t_x, train[1])
-		for model, name in ((lr_model, "LR"),):
-			tp, tn, fp, fn = 0, 0, 0, 0
-			for i in xrange(0, len(t_x)):
-				val = model.predict(t_x[i])
-				if (val == 1 and train[1][i] == 1):
-					tp += 1
-				elif (val == 1 and train[1][i] == 0):
-					fp += 1
-				elif (val == 0 and train[1][i] == 0):
-					tn += 1
-				elif (val == 0 and train[1][i] == 1):
-					fn += 1
-			print "%s - TP: %d, FP: %d, TN: %d, FN: %d" % (name, tp, fp, tn, fn)
+		#lr_model = linmod.LogisticRegression()
+		#lr_model.fit(t_x, train[1])
+		#for model, name in ((lr_model, "LR"),):
+		#	tp, tn, fp, fn = 0, 0, 0, 0
+		#	for i in xrange(0, len(t_x)):
+		#		val = model.predict(t_x[i])
+		#		if (val == 1 and train[1][i] == 1):
+		#			tp += 1
+		#		elif (val == 1 and train[1][i] == 0):
+		#			fp += 1
+		#		elif (val == 0 and train[1][i] == 0):
+		#			tn += 1
+		#		elif (val == 0 and train[1][i] == 1):
+		#			fn += 1
+		#	print "%s - TP: %d, FP: %d, TN: %d, FN: %d" % (name, tp, fp, tn, fn)
 			
 		#get Prediction Errors on left out set
 		lr_test_error = logisticregression.getConfusionMatrix(wvector,scales, copy.deepcopy(test[0]), copy.deepcopy(test[1]))
@@ -164,22 +164,22 @@ def testfeaturesubsets(k, x, y, iso_x, iso_y):
 	
 	results = {}
 	#dataset with features only about sponsor
-	#temp_x_onlyspon = getfeaturesubset([0,1,2,3,4,5,6], x)
-	#temp_x_onlyspon_iso = getfeaturesubset([0,1,2,3,4,5,6], iso_x)
-	#results["dataset_only_sponsor"] = kfolds_all_algos(k, temp_x_onlyspon, y, temp_x_onlyspon_iso, iso_y)
+	temp_x_onlyspon = getfeaturesubset([0,1,2,3,4,5,6], x)
+	temp_x_onlyspon_iso = getfeaturesubset([0,1,2,3,4,5,6], iso_x)
+	results["dataset_only_sponsor"] = kfolds_all_algos(k, temp_x_onlyspon, y, temp_x_onlyspon_iso, iso_y)
 	
 	#dataset with features only about congress composition
-	#temp_x_congress = getfeaturesubset([0,7,8,9,10,11,12,13], x)
-	#temp_x_congress_iso = getfeaturesubset([0,7,8,9,10,11,12,13], iso_x)
-	#results["dataset_only_congress"] = kfolds_all_algos(k, temp_x_congress, y, temp_x_congress_iso, iso_y)
+	temp_x_congress = getfeaturesubset([0,7,8,9,10,11,12,13], x)
+	temp_x_congress_iso = getfeaturesubset([0,7,8,9,10,11,12,13], iso_x)
+	results["dataset_only_congress"] = kfolds_all_algos(k, temp_x_congress, y, temp_x_congress_iso, iso_y)
 	
 	#full dataset
 	results["dataset_full"] = kfolds_all_algos(k, x, y, iso_x, iso_y)
 	
 	#full dataset - personal info of sponsor
-	#temp_x_nopers = getfeaturesubset([0,1,2,6,7,8,9,10,11,12,13], x)
-	#temp_x_nopers_iso = getfeaturesubset([0,1,2,6,7,8,9,10,11,12,13], iso_x)
-	#results["dataset_full_nopersonal"] = kfolds_all_algos(k, temp_x_nopers, y, temp_x_nopers_iso, iso_y)
+	temp_x_nopers = getfeaturesubset([0,1,2,6,7,8,9,10,11,12,13], x)
+	temp_x_nopers_iso = getfeaturesubset([0,1,2,6,7,8,9,10,11,12,13], iso_x)
+	results["dataset_full_nopersonal"] = kfolds_all_algos(k, temp_x_nopers, y, temp_x_nopers_iso, iso_y)
 	
 	return (results)#,  temp_x_onlyspon, temp_x_congress, temp_x_nopers)
 
