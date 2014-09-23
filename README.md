@@ -8,7 +8,9 @@ scrape_files.py is run with no arguments. You will need to change line 90 to you
 
 ##Running K-Fold Validation
 
-##asic Algorithms
+
+
+##Basic Algorithms
 
 
 ##Contol File for basic algorithms
