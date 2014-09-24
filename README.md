@@ -25,6 +25,8 @@ For logistic regression, run like this:
 control.py controlfile
 
 A control file contains
+
   First line: trainingfilename, testfilename"
+  
   Any number of subsequent lines: epsilon,stepsize,iteration limit, restarts"
    
