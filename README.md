@@ -15,4 +15,15 @@ To run K-Fold one must run the kfolds.py without any arguments. To change the nu
 
 ##Contol File for basic algorithms
 
-There are two scripts that can be run for k-fold cross validation- one with the subjects and one without. 
+control.py runs one way for logistic regression and another for LDA and naive Bayes. However, for all of these the training and test files are CSV's with the classes last. Results will be the confusion matrix outputted to a file called testfilenamehere_resultsX where X is the number of the run.
+
+For LDA and naive Bayes, run like this:
+control.py (-lda|-bayes) trainingfile testfile
+
+For logistic regression, run like this:
+control.py controlfile
+
+A control file contains
+  First line: trainingfilename, testfilename"
+  Any number of subsequent lines: epsilon,stepsize,iteration limit, restarts"
+   
