@@ -12,6 +12,7 @@ To run K-Fold one must run the kfolds.py without any arguments. To change the nu
 
 ##Basic Algorithms
 
+Each algorithm has a trainAlgorithm function which takes a list of features and a matching list of classes. There is also a getConfusionMatrix function for each which takes the test data in the same fashion as well as the parameters returned by the train function.
 
 ##Contol File for basic algorithms
 
